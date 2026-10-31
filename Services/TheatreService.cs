@@ -42,6 +42,7 @@ namespace MovieTicketBooking.Services
         {
             ValidateTheatre(
                 request.Name, request.Address, request.City, request.ContactNumber);
+           
 
             var theatre = new Theatre
             {
@@ -60,6 +61,7 @@ namespace MovieTicketBooking.Services
             int id, UpdateTheatreRequest request)
         {
             var theatre = await _theatreRepository.GetByIdAsync(id);
+
 
             if (theatre == null)
                 return null;
