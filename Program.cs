@@ -33,6 +33,11 @@ builder.Services.AddScoped<IScreenRepository, ScreenRepository>();
 
 // Screen Service
 builder.Services.AddScoped<IScreenService, ScreenService>();
+// Seat Repository
+builder.Services.AddScoped<ISeatRepository, SeatRepository>();
+
+// Seat Service
+builder.Services.AddScoped<ISeatService, SeatService>();
 
 var app = builder.Build();
 
