@@ -1,4 +1,5 @@
-﻿namespace MovieTicketBooking.Models
+﻿
+namespace MovieTicketBooking.Models
 {
     public class Theatre
     {

@@ -13,7 +13,7 @@ namespace MovieTicketBooking.Data
         }
 
         public DbSet<Movie> Movies => Set<Movie>();
-
+        public DbSet<Theatre> Theatres => Set<Theatre>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -48,6 +48,28 @@ namespace MovieTicketBooking.Data
                     "CK_Movies_DurationMinutes",
                     "[DurationMinutes] > 0"));
             });
+
+            modelBuilder.Entity<Theatre>(entity =>
+            {
+                entity.HasKey(t => t.TheatreId);
+
+                entity.Property(t => t.Name)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(t => t.Address)
+                    .HasMaxLength(250)
+                    .IsRequired();
+
+                entity.Property(t => t.City)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(t => t.ContactNumber)
+                    .HasMaxLength(20)
+                    .IsRequired();
+            });
+
         }
     }
 }
