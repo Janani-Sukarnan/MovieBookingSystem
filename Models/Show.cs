@@ -1,5 +1,5 @@
 ﻿
-using MovieBookingSystemApi.Models;
+using MovieTicketBooking.Models;
 
 namespace MovieTicketBooking.Models
 {

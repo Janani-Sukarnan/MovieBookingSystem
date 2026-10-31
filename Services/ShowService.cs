@@ -43,19 +43,32 @@ namespace MovieTicketBooking.Services
 
         public async Task<ShowResponse> CreateAsync(CreateShowRequest request)
         {
-            ValidateShow(request.StartTime, request.EndTime, request.TicketPrice);
+            ValidateShow(
+                request.StartTime,
+                request.EndTime,
+                request.TicketPrice);
 
             if (!await _movieRepository.ExistsAsync(request.MovieId))
                 throw new ArgumentException("Movie does not exist.");
 
             if (!await _screenRepository.ExistsAsync(request.ScreenId))
                 throw new ArgumentException("Screen does not exist.");
+
             if (await _showRepository.HasOverlappingShowAsync(
-    request.ScreenId, request.StartTime, request.EndTime))
+                request.ScreenId,
+                request.StartTime,
+                request.EndTime))
             {
                 throw new ArgumentException(
-                    "Another show is already scheduled on this screen during that time.");
+                    "Another show is already scheduled on this screen.");
             }
+
+            var seats = await _showRepository.GetSeatsByScreenIdAsync(
+                request.ScreenId);
+
+            if (seats.Count == 0)
+                throw new ArgumentException(
+                    "No seats are configured for this screen.");
 
             var show = new Show
             {
@@ -68,6 +81,15 @@ namespace MovieTicketBooking.Services
 
             await _showRepository.AddAsync(show);
 
+            var showSeats = seats.Select(seat => new ShowSeat
+            {
+                ShowId = show.ShowId,
+                SeatId = seat.SeatId,
+                IsBooked = false
+            }).ToList();
+
+            await _showRepository.AddShowSeatsAsync(showSeats);
+
             return MapToResponse(show);
         }
 
@@ -79,22 +101,34 @@ namespace MovieTicketBooking.Services
             if (show == null)
                 return null;
 
-            ValidateShow(request.StartTime, request.EndTime, request.TicketPrice);
+            ValidateShow(
+                request.StartTime,
+                request.EndTime,
+                request.TicketPrice);
 
             if (!await _movieRepository.ExistsAsync(request.MovieId))
                 throw new ArgumentException("Movie does not exist.");
 
             if (!await _screenRepository.ExistsAsync(request.ScreenId))
                 throw new ArgumentException("Screen does not exist.");
+
             if (await _showRepository.HasOverlappingShowAsync(
-    request.ScreenId, request.StartTime, request.EndTime, id))
+                request.ScreenId,
+                request.StartTime,
+                request.EndTime,
+                id))
             {
                 throw new ArgumentException(
-                    "Another show is already scheduled on this screen during that time.");
+                    "Another show is already scheduled on this screen.");
+            }
+
+            if (request.ScreenId != show.ScreenId)
+            {
+                throw new ArgumentException(
+                    "The screen cannot be changed after show seats are generated.");
             }
 
             show.MovieId = request.MovieId;
-            show.ScreenId = request.ScreenId;
             show.StartTime = request.StartTime;
             show.EndTime = request.EndTime;
             show.TicketPrice = request.TicketPrice;
@@ -105,7 +139,9 @@ namespace MovieTicketBooking.Services
         }
 
         private static void ValidateShow(
-            DateTime startTime, DateTime endTime, decimal ticketPrice)
+            DateTime startTime,
+            DateTime endTime,
+            decimal ticketPrice)
         {
             if (endTime <= startTime)
                 throw new ArgumentException(

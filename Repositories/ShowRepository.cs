@@ -57,9 +57,12 @@ namespace MovieTicketBooking.Repositories
             return await _context.Shows
                 .AnyAsync(s => s.ShowId == id);
         }
+
         public async Task<bool> HasOverlappingShowAsync(
-    int screenId, DateTime startTime, DateTime endTime,
-    int? excludeShowId = null)
+            int screenId,
+            DateTime startTime,
+            DateTime endTime,
+            int? excludeShowId = null)
         {
             var query = _context.Shows.Where(s =>
                 s.ScreenId == screenId &&
@@ -67,13 +70,22 @@ namespace MovieTicketBooking.Repositories
                 s.EndTime > startTime);
 
             if (excludeShowId.HasValue)
-            {
                 query = query.Where(s => s.ShowId != excludeShowId.Value);
-            }
 
             return await query.AnyAsync();
         }
 
-        
+        public async Task<List<Seat>> GetSeatsByScreenIdAsync(int screenId)
+        {
+            return await _context.Seats
+                .Where(s => s.ScreenId == screenId)
+                .ToListAsync();
+        }
+
+        public async Task AddShowSeatsAsync(List<ShowSeat> showSeats)
+        {
+            _context.ShowSeats.AddRange(showSeats);
+            await _context.SaveChangesAsync();
+        }
     }
 }

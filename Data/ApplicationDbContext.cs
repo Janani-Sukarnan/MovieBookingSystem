@@ -18,6 +18,9 @@ namespace MovieTicketBooking.Data
         public DbSet<Seat> Seats => Set<Seat>();
         public DbSet<Show> Shows => Set<Show>();
         public DbSet<ShowSeat> ShowSeats => Set<ShowSeat>();
+        public DbSet<Booking> Bookings => Set<Booking>();
+        public DbSet<BookingSeat> BookingSeats => Set<BookingSeat>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -177,9 +180,62 @@ namespace MovieTicketBooking.Data
                     .IsUnique();
             });
 
+            // Booking configuration
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.HasKey(b => b.BookingId);
 
+                entity.Property(b => b.CustomerName)
+                    .HasMaxLength(150)
+                    .IsRequired();
 
+                entity.Property(b => b.CustomerEmail)
+                    .HasMaxLength(150)
+                    .IsRequired();
 
+                entity.Property(b => b.ContactNumber)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(b => b.BookingDate)
+                    .IsRequired();
+
+                entity.Property(b => b.TotalAmount)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(b => b.Status)
+                    .HasMaxLength(30)
+                    .IsRequired();
+
+                entity.HasMany(b => b.BookingSeats)
+                    .WithOne(bs => bs.Booking)
+                    .HasForeignKey(bs => bs.BookingId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_Bookings_TotalAmount",
+                    "[TotalAmount] > 0"));
+            });
+
+            // BookingSeat configuration
+            modelBuilder.Entity<BookingSeat>(entity =>
+            {
+                entity.HasKey(bs => bs.BookingSeatId);
+
+                entity.Property(bs => bs.Price)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.HasOne(bs => bs.ShowSeat)
+                    .WithMany()
+                    .HasForeignKey(bs => bs.ShowSeatId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // One show seat can belong to only one booking.
+                entity.HasIndex(bs => bs.ShowSeatId)
+                    .IsUnique();
+            });
         }
     }
 }

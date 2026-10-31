@@ -15,8 +15,15 @@ namespace MovieTicketBooking.Repositories.Interfaces
         Task UpdateAsync(Show show);
 
         Task<bool> ExistsAsync(int id);
+
         Task<bool> HasOverlappingShowAsync(
-    int screenId, DateTime startTime, DateTime endTime,
-    int? excludeShowId = null);
+            int screenId,
+            DateTime startTime,
+            DateTime endTime,
+            int? excludeShowId = null);
+
+        Task<List<Seat>> GetSeatsByScreenIdAsync(int screenId);
+
+        Task AddShowSeatsAsync(List<ShowSeat> showSeats);
     }
 }
