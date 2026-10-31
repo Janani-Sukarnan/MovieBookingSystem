@@ -20,6 +20,7 @@ namespace MovieTicketBooking.Data
         public DbSet<ShowSeat> ShowSeats => Set<ShowSeat>();
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<BookingSeat> BookingSeats => Set<BookingSeat>();
+        public DbSet<Review> Reviews => Set<Review>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -235,6 +236,33 @@ namespace MovieTicketBooking.Data
                 // One show seat can belong to only one booking.
                 entity.HasIndex(bs => bs.ShowSeatId)
                     .IsUnique();
+            });
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasKey(r => r.ReviewId);
+
+                entity.Property(r => r.CustomerName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(r => r.Rating)
+                    .IsRequired();
+
+                entity.Property(r => r.Comment)
+                    .HasMaxLength(1000)
+                    .IsRequired();
+
+                entity.Property(r => r.ReviewDate)
+                    .IsRequired();
+
+                entity.HasOne(r => r.Movie)
+                    .WithMany()
+                    .HasForeignKey(r => r.MovieId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_Reviews_Rating",
+                    "[Rating] >= 1 AND [Rating] <= 5"));
             });
         }
     }

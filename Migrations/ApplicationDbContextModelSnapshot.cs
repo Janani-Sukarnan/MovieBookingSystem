@@ -132,6 +132,43 @@ namespace MovieBookingSystemApi.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MovieTicketBooking.Models.Review", b =>
+                {
+                    b.Property<int>("ReviewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReviewDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ReviewId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("Reviews", t =>
+                        {
+                            t.HasCheckConstraint("CK_Reviews_Rating", "[Rating] >= 1 AND [Rating] <= 5");
+                        });
+                });
+
             modelBuilder.Entity("MovieTicketBooking.Models.Screen", b =>
                 {
                     b.Property<int>("ScreenId")
@@ -314,6 +351,17 @@ namespace MovieBookingSystemApi.Migrations
                     b.Navigation("Booking");
 
                     b.Navigation("ShowSeat");
+                });
+
+            modelBuilder.Entity("MovieTicketBooking.Models.Review", b =>
+                {
+                    b.HasOne("MovieTicketBooking.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("MovieTicketBooking.Models.Screen", b =>
