@@ -28,6 +28,11 @@ builder.Services.AddScoped<ITheatreRepository, TheatreRepository>();
 
 // Theatre Service
 builder.Services.AddScoped<ITheatreService, TheatreService>();
+// Screen Repository
+builder.Services.AddScoped<IScreenRepository, ScreenRepository>();
+
+// Screen Service
+builder.Services.AddScoped<IScreenService, ScreenService>();
 
 var app = builder.Build();
 

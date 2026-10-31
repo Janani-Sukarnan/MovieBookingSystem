@@ -14,6 +14,7 @@ namespace MovieTicketBooking.Data
 
         public DbSet<Movie> Movies => Set<Movie>();
         public DbSet<Theatre> Theatres => Set<Theatre>();
+        public DbSet<Screen> Screens => Set<Screen>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -69,6 +70,32 @@ namespace MovieTicketBooking.Data
                     .HasMaxLength(20)
                     .IsRequired();
             });
+
+            modelBuilder.Entity<Screen>(entity =>
+            {
+                entity.HasKey(s => s.ScreenId);
+
+                entity.Property(s => s.ScreenName)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(s => s.TotalSeats)
+                    .IsRequired();
+
+                entity.Property(s => s.ScreenType)
+                    .HasMaxLength(30)
+                    .IsRequired();
+
+                entity.HasOne(s => s.Theatre)
+                    .WithMany()
+                    .HasForeignKey(s => s.TheatreId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.ToTable(t => t.HasCheckConstraint(
+                    "CK_Screens_TotalSeats",
+                    "[TotalSeats] > 0"));
+            });
+
 
         }
     }
