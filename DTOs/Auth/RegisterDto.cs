@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace MovieBookingSystem.DTOs.Auth
 {
@@ -10,10 +11,11 @@ namespace MovieBookingSystem.DTOs.Auth
 
         [Required]
         [EmailAddress]
+        [MaxLength(150)]
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [MinLength(6)]
+        [MinLength(8)]
         public string Password { get; set; } = string.Empty;
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieBookingSystem.Models;
 using MovieBookingSystemApi.Constants;
 using MovieTicketBooking.Data;
-
+using MovieTicketBooking.Models;
 namespace MovieTicketBooking.Data
 {
     public static class RoleSeeder

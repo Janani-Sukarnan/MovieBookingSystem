@@ -1,4 +1,5 @@
-﻿using MovieTicketBooking.Models;
+﻿
+using MovieTicketBooking.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace MovieBookingSystem.Models

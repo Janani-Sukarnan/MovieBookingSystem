@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿
+using Microsoft.IdentityModel.Tokens;
 using MovieBookingSystem.Models;
 using MovieBookingSystem.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,18 +19,10 @@ namespace MovieBookingSystem.Services
 
         public string GenerateToken(User user)
         {
-            var jwtSettings = _configuration.GetSection("Jwt");
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+            var jwt = _configuration.GetSection("Jwt");
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
+                Encoding.UTF8.GetBytes(jwt["Key"]!)
             );
 
             var credentials = new SigningCredentials(
@@ -37,11 +30,24 @@ namespace MovieBookingSystem.Services
                 SecurityAlgorithms.HmacSha256
             );
 
+            var claims = new[]
+            {
+                new Claim(
+                    ClaimTypes.NameIdentifier,
+                    user.UserId.ToString()
+                ),
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
             var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
+                issuer: jwt["Issuer"],
+                audience: jwt["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddMinutes(
+                    double.Parse(jwt["ExpiryMinutes"]!)
+                ),
                 signingCredentials: credentials
             );
 

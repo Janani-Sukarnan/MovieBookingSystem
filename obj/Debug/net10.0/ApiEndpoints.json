@@ -8,7 +8,7 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "loginDto",
+        "Name": "dto",
         "Type": "MovieBookingSystem.DTOs.Auth.LoginDto",
         "IsRequired": true
       }
@@ -24,7 +24,7 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "registerDto",
+        "Name": "dto",
         "Type": "MovieBookingSystem.DTOs.Auth.RegisterDto",
         "IsRequired": true
       }

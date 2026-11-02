@@ -1490,10 +1490,11 @@
             "type": "string"
           },
           "email": {
+            "maxLength": 150,
             "type": "string"
           },
           "password": {
-            "minLength": 6,
+            "minLength": 8,
             "type": "string"
           }
         }

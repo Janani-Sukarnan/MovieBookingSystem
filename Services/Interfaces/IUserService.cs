@@ -1,12 +1,14 @@
-﻿using MovieBookingSystem.DTOs.Auth;
-using MovieBookingSystem.Models;
+﻿
+using MovieBookingSystem.DTOs.Auth;
 
 namespace MovieBookingSystem.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(RegisterDto registerDto);
+        Task<(bool Success, string Message)> RegisterAsync(
+            RegisterDto dto);
 
-        Task<User?> LoginAsync(LoginDto loginDto);
+        Task<(bool Success, string Message, string? Token)> LoginAsync(
+            LoginDto dto);
     }
 }

@@ -28,15 +28,22 @@ namespace MovieTicketBooking.Services
             return bookings.Select(MapToResponse).ToList();
         }
 
-        public async Task<BookingResponse?> GetByIdAsync(int id)
+        public async Task<BookingResponse?> GetByIdAsync(
+            int id, int userId, bool canManageAll)
         {
             var booking = await _bookingRepository.GetByIdAsync(id);
 
-            return booking == null ? null : MapToResponse(booking);
+            if (booking == null)
+                return null;
+
+            if (!canManageAll && booking.UserId != userId)
+                return null;
+
+            return MapToResponse(booking);
         }
 
         public async Task<BookingResponse> CreateAsync(
-            CreateBookingRequest request)
+            CreateBookingRequest request, int userId)
         {
             ValidateCustomer(request);
 
@@ -82,6 +89,10 @@ namespace MovieTicketBooking.Services
                 BookingDate = DateTime.Now,
                 TotalAmount = totalAmount,
                 Status = "Confirmed",
+
+                // Link the booking to the authenticated user.
+                UserId = userId,
+
                 BookingSeats = new List<BookingSeat>()
             };
 
@@ -92,11 +103,17 @@ namespace MovieTicketBooking.Services
         }
 
         public async Task<BookingResponse?> UpdateAsync(
-            int id, UpdateBookingRequest request)
+            int id,
+            UpdateBookingRequest request,
+            int userId,
+            bool canManageAll)
         {
             var booking = await _bookingRepository.GetByIdAsync(id);
 
             if (booking == null)
+                return null;
+
+            if (!canManageAll && booking.UserId != userId)
                 return null;
 
             if (booking.Status != "Confirmed")
@@ -117,12 +134,15 @@ namespace MovieTicketBooking.Services
             return MapToResponse(booking);
         }
 
-        // Cancel a booking and release its reserved seats.
-        public async Task<bool> CancelAsync(int id)
+        public async Task<bool> CancelAsync(
+            int id, int userId, bool canManageAll)
         {
             var booking = await _bookingRepository.GetByIdAsync(id);
 
             if (booking == null)
+                return false;
+
+            if (!canManageAll && booking.UserId != userId)
                 return false;
 
             if (booking.Status != "Confirmed")

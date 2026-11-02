@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
+using Microsoft.AspNetCore.Identity;
 using MovieBookingSystem.DTOs.Auth;
 using MovieBookingSystem.Models;
 using MovieBookingSystem.Services.Interfaces;
@@ -9,64 +10,77 @@ namespace MovieBookingSystem.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly PasswordHasher<User> _passwordHasher;
+        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IJwtService _jwtService;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(
+            IUserRepository userRepository,
+            IPasswordHasher<User> passwordHasher,
+            IJwtService jwtService)
         {
             _userRepository = userRepository;
-            _passwordHasher = new PasswordHasher<User>();
+            _passwordHasher = passwordHasher;
+            _jwtService = jwtService;
         }
 
-        public async Task<User> RegisterAsync(RegisterDto registerDto)
+        public async Task<(bool Success, string Message)>
+            RegisterAsync(RegisterDto dto)
         {
-            var existingUser = await _userRepository
-                .GetUserByEmailAsync(registerDto.Email);
+            string email = dto.Email.Trim().ToLowerInvariant();
+
+            var existingUser =
+                await _userRepository.GetUserByEmailAsync(email);
 
             if (existingUser != null)
             {
-                throw new Exception("Email already registered.");
+                return (false, "Email is already registered.");
             }
 
             var user = new User
             {
-                Name = registerDto.Name,
-                Email = registerDto.Email,
+                Name = dto.Name.Trim(),
+                Email = email,
                 Role = "Customer"
             };
 
             user.PasswordHash = _passwordHasher.HashPassword(
                 user,
-                registerDto.Password
+                dto.Password
             );
 
             await _userRepository.AddUserAsync(user);
             await _userRepository.SaveChangesAsync();
 
-            return user;
+            return (true, "Registration successful.");
         }
 
-        public async Task<User?> LoginAsync(LoginDto loginDto)
+        public async Task<(bool Success, string Message, string? Token)>
+            LoginAsync(LoginDto dto)
         {
-            var user = await _userRepository
-                .GetUserByEmailAsync(loginDto.Email);
+            string email = dto.Email.Trim().ToLowerInvariant();
+
+            var user =
+                await _userRepository.GetUserByEmailAsync(email);
 
             if (user == null)
             {
-                return null;
+                return (false, "Invalid email or password.", null);
             }
 
             var result = _passwordHasher.VerifyHashedPassword(
                 user,
                 user.PasswordHash,
-                loginDto.Password
+                dto.Password
             );
 
             if (result == PasswordVerificationResult.Failed)
             {
-                return null;
+                return (false, "Invalid email or password.", null);
             }
 
-            return user;
+            string token = _jwtService.GenerateToken(user);
+
+            return (true, "Login successful.", token);
         }
     }
 }
