@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBooking.DTOs.Theatres;
 using MovieTicketBooking.Services.Interfaces;
+using MovieBookingSystemApi.Constants;
 
 namespace MovieTicketBooking.Controllers
 {
@@ -16,6 +18,8 @@ namespace MovieTicketBooking.Controllers
             _theatreService = theatreService;
         }
 
+        // GET: api/theatres
+        // Public access
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int pageNumber = 1,
@@ -36,6 +40,8 @@ namespace MovieTicketBooking.Controllers
             }
         }
 
+        // GET: api/theatres/1
+        // Public access
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -47,7 +53,10 @@ namespace MovieTicketBooking.Controllers
             return Ok(theatre);
         }
 
+        // POST: api/theatres
+        // Admin only
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Create(
             [FromBody] CreateTheatreRequest request)
         {
@@ -66,7 +75,10 @@ namespace MovieTicketBooking.Controllers
             }
         }
 
+        // PUT: api/theatres/1
+        // Admin only
         [HttpPut("{id:int}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Update(
             int id,
             [FromBody] UpdateTheatreRequest request)
@@ -86,7 +98,10 @@ namespace MovieTicketBooking.Controllers
             }
         }
 
+        // DELETE: api/theatres/1
+        // Admin only
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _theatreService.DeleteAsync(id);

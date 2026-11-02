@@ -1,7 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MovieTicketBooking.DTOs.Shows;
 using MovieTicketBooking.Services.Interfaces;
+using MovieBookingSystemApi.Constants;
 
 namespace MovieTicketBooking.Controllers
 {
@@ -16,6 +18,8 @@ namespace MovieTicketBooking.Controllers
             _showService = showService;
         }
 
+        // GET: api/shows
+        // Public access
         [HttpGet]
         public async Task<IActionResult> GetAll(
             int pageNumber = 1,
@@ -36,6 +40,8 @@ namespace MovieTicketBooking.Controllers
             }
         }
 
+        // GET: api/shows/1
+        // Public access
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -47,7 +53,10 @@ namespace MovieTicketBooking.Controllers
             return Ok(show);
         }
 
+        // POST: api/shows
+        // Admin only
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Create(CreateShowRequest request)
         {
             try
@@ -65,7 +74,10 @@ namespace MovieTicketBooking.Controllers
             }
         }
 
+        // PUT: api/shows/1
+        // Admin only
         [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> Update(
             int id, UpdateShowRequest request)
         {

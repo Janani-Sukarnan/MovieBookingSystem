@@ -108,9 +108,9 @@ builder.Services.AddScoped<IPasswordHasher<MovieBookingSystem.Models.User>,
     PasswordHasher<MovieBookingSystem.Models.User>>();
 
 var app = builder.Build();
-//await RoleSeeder.SeedAsync(
-  //  app.Services,
-    //app.Configuration);
+await RoleSeeder.SeedAsync(
+    app.Services,
+    app.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
