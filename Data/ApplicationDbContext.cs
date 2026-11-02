@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using MovieBookingSystem.Models;
 using MovieTicketBooking.Models;
 
 namespace MovieTicketBooking.Data
@@ -21,6 +22,7 @@ namespace MovieTicketBooking.Data
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<BookingSeat> BookingSeats => Set<BookingSeat>();
         public DbSet<Review> Reviews => Set<Review>();
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -264,6 +266,12 @@ namespace MovieTicketBooking.Data
                     "CK_Reviews_Rating",
                     "[Rating] >= 1 AND [Rating] <= 5"));
             });
+            // User - Booking relationship
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Bookings)
+                .WithOne(b => b.User)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

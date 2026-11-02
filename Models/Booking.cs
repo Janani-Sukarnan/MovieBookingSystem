@@ -1,4 +1,6 @@
 ﻿
+using MovieBookingSystem.Models;
+
 namespace MovieTicketBooking.Models
 {
     public class Booking
@@ -10,6 +12,9 @@ namespace MovieTicketBooking.Models
         public DateTime BookingDate { get; set; }
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } = "Confirmed";
+        public int UserId { get; set; }
+
+        public User User { get; set; } = null!;
 
         public ICollection<BookingSeat> BookingSeats { get; set; }
             = new List<BookingSeat>();
