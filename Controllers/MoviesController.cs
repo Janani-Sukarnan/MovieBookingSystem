@@ -20,6 +20,8 @@ namespace MovieTicketBooking.Controllers
 
         // GET: api/movies
         // Public access
+        // GET: api/movies
+        // Public access
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int pageNumber = 1,

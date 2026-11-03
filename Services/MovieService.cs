@@ -2,6 +2,7 @@
 using MovieTicketBooking.Models;
 using MovieTicketBooking.Repositories.Interfaces;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.DTOs.Common;
 
 namespace MovieTicketBooking.Services
 {
@@ -15,18 +16,36 @@ namespace MovieTicketBooking.Services
         }
 
         // Get all movies with pagination
-        public async Task<List<MovieResponse>> GetAllAsync(
-            int pageNumber, int pageSize, string? title)
+        // Get all movies with pagination
+        public async Task<PagedResponse<MovieResponse>> GetAllAsync(
+            int pageNumber,
+            int pageSize,
+            string? title)
         {
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
             {
                 throw new ArgumentException("Invalid pagination values.");
             }
 
+            // Get total number of matching movies
+            var totalRecords = await _movieRepository.GetTotalMoviesAsync(title);
+
+            // Get movies for the requested page
             var movies = await _movieRepository.GetPagedAsync(
                 pageNumber, pageSize, title);
 
-            return movies.Select(m => MapToResponse(m)).ToList();
+            // Calculate total pages
+            var totalPages = (int)Math.Ceiling(
+                (double)totalRecords / pageSize);
+
+            return new PagedResponse<MovieResponse>
+            {
+                Items = movies.Select(m => MapToResponse(m)).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
         }
 
         // Get movie by ID

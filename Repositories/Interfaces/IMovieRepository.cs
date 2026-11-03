@@ -1,12 +1,17 @@
 ﻿using MovieTicketBooking.Models;
-
+using MovieTicketBooking.DTOs.Common;
 namespace MovieTicketBooking.Repositories.Interfaces
 {
     public interface IMovieRepository
     {
         Task<List<Movie>> GetAllAsync();
 
-        Task<List<Movie>> GetPagedAsync(int pageNumber, int pageSize, string? title);
+        Task<int> GetTotalMoviesAsync(string? title);
+
+        Task<List<Movie>> GetPagedAsync(
+            int pageNumber,
+            int pageSize,
+            string? title);
 
         Task<List<Movie>> SearchByTitleAsync(string title);
 

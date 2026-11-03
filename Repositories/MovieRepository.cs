@@ -2,6 +2,7 @@
 using MovieTicketBooking.Data;
 using MovieTicketBooking.Models;
 using MovieTicketBooking.Repositories.Interfaces;
+using MovieTicketBooking.DTOs.Common;
 
 namespace MovieTicketBooking.Repositories
 {
@@ -72,6 +73,17 @@ namespace MovieTicketBooking.Repositories
                 .Where(m => m.Title.Contains(title))
                 .OrderBy(m => m.Title)
                 .ToListAsync();
+        }
+        public async Task<int> GetTotalMoviesAsync(string? title)
+        {
+            var query = _context.Movies.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(m => m.Title.Contains(title));
+            }
+
+            return await query.CountAsync();
         }
     }
 }

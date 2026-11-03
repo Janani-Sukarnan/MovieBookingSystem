@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MovieTicketBooking.DTOs.Reviews;
 using MovieTicketBooking.Services.Interfaces;
 
@@ -115,6 +114,8 @@ namespace MovieTicketBooking.Controllers
             }
             catch (ArgumentException ex)
             {
+
+
                 return BadRequest(ex.Message);
             }
         }
