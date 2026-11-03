@@ -70,5 +70,23 @@ namespace MovieTicketBooking.Repositories
             return await _context.Theatres
                 .AnyAsync(t => t.TheatreId == id);
         }
+        public async Task<int> GetTotalTheatresAsync(
+    string? name,
+    string? city)
+        {
+            var query = _context.Theatres.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                query = query.Where(t => t.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(city))
+            {
+                query = query.Where(t => t.City.Contains(city));
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

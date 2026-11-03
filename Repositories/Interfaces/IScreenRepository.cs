@@ -13,6 +13,7 @@ namespace MovieTicketBooking.Repositories.Interfaces
         Task<Screen?> GetByIdAsync(int id);
 
         Task<Screen> AddAsync(Screen screen);
+        Task<int> GetTotalScreensAsync(int? theatreId);
 
         Task UpdateAsync(Screen screen);
 

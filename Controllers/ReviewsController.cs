@@ -17,10 +17,21 @@ namespace MovieTicketBooking.Controllers
 
         // GET: api/reviews
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
-            var reviews = await _reviewService.GetAllAsync();
-            return Ok(reviews);
+            try
+            {
+                var reviews = await _reviewService.GetAllAsync(
+                    pageNumber, pageSize);
+
+                return Ok(reviews);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/reviews/1
@@ -37,11 +48,16 @@ namespace MovieTicketBooking.Controllers
 
         // GET: api/reviews/movie/1
         [HttpGet("movie/{movieId}")]
-        public async Task<IActionResult> GetByMovieId(int movieId)
+        public async Task<IActionResult> GetByMovieId(
+    int movieId,
+    [FromQuery] int pageNumber = 1,
+    [FromQuery] int pageSize = 10)
         {
             try
             {
-                var reviews = await _reviewService.GetByMovieIdAsync(movieId);
+                var reviews = await _reviewService.GetByMovieIdAsync(
+                    movieId, pageNumber, pageSize);
+
                 return Ok(reviews);
             }
             catch (ArgumentException ex)

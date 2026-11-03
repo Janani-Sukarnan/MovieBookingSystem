@@ -4,7 +4,7 @@ using MovieTicketBooking.Models;
 using MovieTicketBooking.Repositories;
 using MovieTicketBooking.Repositories.Interfaces;
 using MovieTicketBooking.Services.Interfaces;
-
+using MovieTicketBooking.DTOs.Common;
 namespace MovieTicketBooking.Services
 {
     public class TheatreService : ITheatreService
@@ -16,16 +16,32 @@ namespace MovieTicketBooking.Services
             _theatreRepository = theatreRepository;
         }
 
-        public async Task<List<TheatreResponse>> GetAllAsync(
-            int pageNumber, int pageSize, string? name, string? city)
+        public async Task<PagedResponse<TheatreResponse>> GetAllAsync(
+    int pageNumber,
+    int pageSize,
+    string? name,
+    string? city)
         {
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
                 throw new ArgumentException("Invalid pagination values.");
 
+            var totalRecords = await _theatreRepository.GetTotalTheatresAsync(
+                name, city);
+
             var theatres = await _theatreRepository.GetPagedAsync(
                 pageNumber, pageSize, name, city);
 
-            return theatres.Select(t => MapToResponse(t)).ToList();
+            var totalPages = (int)Math.Ceiling(
+                (double)totalRecords / pageSize);
+
+            return new PagedResponse<TheatreResponse>
+            {
+                Items = theatres.Select(t => MapToResponse(t)).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<TheatreResponse?> GetByIdAsync(int id)

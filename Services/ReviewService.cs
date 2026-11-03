@@ -2,6 +2,7 @@
 using MovieTicketBooking.Models;
 using MovieTicketBooking.Repositories.Interfaces;
 using MovieTicketBooking.Services.Interfaces;
+using MovieTicketBooking.DTOs.Common;
 
 namespace MovieTicketBooking.Services
 {
@@ -14,10 +15,29 @@ namespace MovieTicketBooking.Services
             _reviewRepository = reviewRepository;
         }
 
-        public async Task<List<ReviewResponse>> GetAllAsync()
+        public async Task<PagedResponse<ReviewResponse>> GetAllAsync(
+    int pageNumber, int pageSize)
         {
-            var reviews = await _reviewRepository.GetAllAsync();
-            return reviews.Select(MapToResponse).ToList();
+            if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+                throw new ArgumentException("Invalid pagination values.");
+
+            var totalRecords =
+                await _reviewRepository.GetTotalReviewsAsync(null);
+
+            var reviews = await _reviewRepository.GetPagedAsync(
+                pageNumber, pageSize, null);
+
+            var totalPages =
+                (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            return new PagedResponse<ReviewResponse>
+            {
+                Items = reviews.Select(MapToResponse).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<ReviewResponse?> GetByIdAsync(int id)
@@ -27,13 +47,35 @@ namespace MovieTicketBooking.Services
         }
 
 
-        public async Task<List<ReviewResponse>> GetByMovieIdAsync(int movieId)
+        public async Task<PagedResponse<ReviewResponse>> GetByMovieIdAsync(
+    int movieId, int pageNumber, int pageSize)
         {
             if (movieId <= 0)
                 throw new ArgumentException("Invalid MovieId.");
 
-            var reviews = await _reviewRepository.GetByMovieIdAsync(movieId);
-            return reviews.Select(MapToResponse).ToList();
+            if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+                throw new ArgumentException("Invalid pagination values.");
+
+            if (!await _reviewRepository.MovieExistsAsync(movieId))
+                throw new ArgumentException("Movie not found.");
+
+            var totalRecords =
+                await _reviewRepository.GetTotalReviewsAsync(movieId);
+
+            var reviews = await _reviewRepository.GetPagedAsync(
+                pageNumber, pageSize, movieId);
+
+            var totalPages =
+                (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            return new PagedResponse<ReviewResponse>
+            {
+                Items = reviews.Select(MapToResponse).ToList(),
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
         }
 
         public async Task<ReviewResponse> CreateAsync(CreateReviewRequest request)

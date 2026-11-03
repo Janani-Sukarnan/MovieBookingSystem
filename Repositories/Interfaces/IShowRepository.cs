@@ -11,6 +11,7 @@ namespace MovieTicketBooking.Repositories.Interfaces
         Task<Show?> GetByIdAsync(int id);
 
         Task<Show> AddAsync(Show show);
+        Task<int> GetTotalShowsAsync(int? movieId, int? screenId);
 
         Task UpdateAsync(Show show);
 

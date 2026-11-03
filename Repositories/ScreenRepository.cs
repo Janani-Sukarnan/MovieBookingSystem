@@ -56,5 +56,16 @@ namespace MovieTicketBooking.Repositories
             return await _context.Screens
                 .AnyAsync(s => s.ScreenId == id);
         }
+        public async Task<int> GetTotalScreensAsync(int? theatreId)
+        {
+            var query = _context.Screens.AsQueryable();
+
+            if (theatreId.HasValue)
+            {
+                query = query.Where(s => s.TheatreId == theatreId.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

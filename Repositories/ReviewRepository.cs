@@ -14,13 +14,13 @@ namespace MovieTicketBooking.Repositories
             _context = context;
         }
 
-        public async Task<List<Review>> GetAllAsync()
+        /*public async Task<List<Review>> GetAllAsync()
         {
             return await _context.Reviews
                 .Include(r => r.Movie)
                 .OrderByDescending(r => r.ReviewDate)
                 .ToListAsync();
-        }
+        }*/
 
         public async Task<Review?> GetByIdAsync(int id)
         {
@@ -29,7 +29,7 @@ namespace MovieTicketBooking.Repositories
                 .FirstOrDefaultAsync(r => r.ReviewId == id);
         }
 
-        public async Task<List<Review>> GetByMovieIdAsync(int movieId)
+        /*public async Task<List<Review>> GetByMovieIdAsync(int movieId)
         {
             return await _context.Reviews
                 .Include(r => r.Movie)
@@ -37,7 +37,39 @@ namespace MovieTicketBooking.Repositories
                 .OrderByDescending(r => r.ReviewDate)
                 .ToListAsync();
         }
+        */
+        public async Task<List<Review>> GetPagedAsync(
+    int pageNumber,
+    int pageSize,
+    int? movieId)
+        {
+            var query = _context.Reviews
+                .Include(r => r.Movie)
+                .AsQueryable();
 
+            if (movieId.HasValue)
+            {
+                query = query.Where(r => r.MovieId == movieId.Value);
+            }
+
+            return await query
+                .OrderByDescending(r => r.ReviewDate)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalReviewsAsync(int? movieId)
+        {
+            var query = _context.Reviews.AsQueryable();
+
+            if (movieId.HasValue)
+            {
+                query = query.Where(r => r.MovieId == movieId.Value);
+            }
+
+            return await query.CountAsync();
+        }
         public async Task<Review> AddAsync(Review review)
         {
             _context.Reviews.Add(review);

@@ -10,6 +10,7 @@ namespace MovieTicketBooking.Repositories.Interfaces
 
         Task<List<ShowSeat>> GetShowSeatsForBookingAsync(
             int showId, List<int> showSeatIds);
+        Task<int> GetTotalBookingsAsync();
 
         Task<Booking> AddAsync(Booking booking, List<ShowSeat> showSeats);
         Task UpdateAsync(Booking booking);

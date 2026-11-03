@@ -14,6 +14,10 @@ namespace MovieTicketBooking.Repositories
         {
             _context = context;
         }
+        public async Task<int> GetTotalBookingsAsync()
+        {
+            return await _context.Bookings.CountAsync();
+        }
 
         public async Task<List<Booking>> GetPagedAsync(
             int pageNumber, int pageSize)

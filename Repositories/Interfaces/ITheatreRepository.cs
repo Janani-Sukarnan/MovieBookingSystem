@@ -12,6 +12,7 @@ namespace MovieTicketBooking.Repositories.Interfaces
             string? city);
 
         Task<Theatre?> GetByIdAsync(int id);
+        Task<int> GetTotalTheatresAsync(string? name, string? city);
 
         Task<Theatre> AddAsync(Theatre theatre);
 

@@ -87,5 +87,23 @@ namespace MovieTicketBooking.Repositories
             _context.ShowSeats.AddRange(showSeats);
             await _context.SaveChangesAsync();
         }
+        public async Task<int> GetTotalShowsAsync(
+    int? movieId,
+    int? screenId)
+        {
+            var query = _context.Shows.AsQueryable();
+
+            if (movieId.HasValue)
+            {
+                query = query.Where(s => s.MovieId == movieId.Value);
+            }
+
+            if (screenId.HasValue)
+            {
+                query = query.Where(s => s.ScreenId == screenId.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }

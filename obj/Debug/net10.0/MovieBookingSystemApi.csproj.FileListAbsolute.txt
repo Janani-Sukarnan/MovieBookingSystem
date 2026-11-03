@@ -160,10 +160,10 @@ C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\stat
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\staticwebassets.development.json
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\staticwebassets.build.endpoints.json
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\swae.build.ex.cache
+C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\MovieBoo.1DEDB12A.Up2Date
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\MovieBookingSystemApi.dll
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\refint\MovieBookingSystemApi.dll
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\MovieBookingSystemApi.pdb
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\MovieBookingSystemApi.genruntimeconfig.cache
 C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\ref\MovieBookingSystemApi.dll
-C:\Users\HP\Desktop\MovieBookingSystem\MovieBookingSystem\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

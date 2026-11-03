@@ -1,12 +1,12 @@
 ﻿
 using MovieTicketBooking.DTOs.Seats;
-
+using MovieTicketBooking.DTOs.Common;
 namespace MovieTicketBooking.Services.Interfaces
 {
     public interface ISeatService
     {
-        Task<List<SeatResponse>> GetAllAsync(
-            int pageNumber, int pageSize, int? screenId);
+        Task<PagedResponse<SeatResponse>> GetAllAsync(
+    int pageNumber, int pageSize, int? screenId);
 
         Task<SeatResponse?> GetByIdAsync(int id);
 
